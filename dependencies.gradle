@@ -18,7 +18,7 @@ ext {
             jodaTime             : '2.10.10',
             jodaTimeAndroid      : '2.10.9.1',
             jUnit                : '4.13.2',
-            kotlin               : '1.4.32',
+            kotlin               : '1.5.0',
             mockito              : '3.8.0',
             mockitoKotlin        : '2.2.0',
             robolectric          : '4.3.1',

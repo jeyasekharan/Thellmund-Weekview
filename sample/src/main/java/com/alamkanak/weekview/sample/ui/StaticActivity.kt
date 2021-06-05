@@ -10,21 +10,22 @@ import com.alamkanak.weekview.sample.R
 import com.alamkanak.weekview.sample.data.model.CalendarEntity
 import com.alamkanak.weekview.sample.data.model.toWeekViewEntity
 import com.alamkanak.weekview.sample.databinding.ActivityStaticBinding
-import com.alamkanak.weekview.sample.util.defaultDateTimeFormatter
-import com.alamkanak.weekview.sample.util.genericViewModel
-import com.alamkanak.weekview.sample.util.setupWithWeekView
-import com.alamkanak.weekview.sample.util.showToast
-import com.alamkanak.weekview.sample.util.yearMonthsBetween
+import com.alamkanak.weekview.sample.models.EventUtils.getData
+import com.alamkanak.weekview.sample.models.Events
+import com.alamkanak.weekview.sample.util.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class StaticActivity : AppCompatActivity() {
 
     private val binding: ActivityStaticBinding by lazy {
         ActivityStaticBinding.inflate(layoutInflater)
     }
+    var arrayList: ArrayList<List<Events>>? = null
+    var alFlatEvents: List<Events>? = null
 
     private val viewModel by genericViewModel()
 
@@ -40,6 +41,17 @@ class StaticActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        // Get data and flatten
+
+        arrayList = getData()
+        alFlatEvents = arrayList!!.flatten()
+
+        // Map to Calendar Entity
+
+        alFlatEvents!!.map { CalendarEntity.Event(it.id.toLong(), it.title, it.startTime, it.endTime, it.location, it.) }
+
+
 
         binding.toolbarContainer.toolbar.setupWithWeekView(binding.weekView)
         binding.weekView.adapter = adapter
