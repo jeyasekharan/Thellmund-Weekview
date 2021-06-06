@@ -1,6 +1,8 @@
 package com.alamkanak.weekview.sample.ui
 
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.alamkanak.weekview.WeekViewEntity
 import com.alamkanak.weekview.jsr310.WeekViewPagingAdapterJsr310
@@ -43,13 +45,15 @@ class StaticActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Get data and flatten
-
         arrayList = getData()
         alFlatEvents = arrayList!!.flatten()
 
+
+       // val time = LocalDateTime.of(year= "2021")
         // Map to Calendar Entity
 
-        alFlatEvents!!.map { CalendarEntity.Event(it.id.toLong(), it.title, it.startTime, it.endTime, it.location, it.) }
+        //alFlatEvents!!.map { CalendarEntity.Event(it.id.toLong(), it.title, "2021-05-03T20:00", it.endTime,
+         //    it.location, Color.parseColor("#00ff00"), false, false) }
 
 
 
@@ -69,6 +73,7 @@ class StaticActivity : AppCompatActivity() {
         }
 
         viewModel.viewState.observe(this) { viewState ->
+            Log.e("entittieeeee  ", " entitess    $viewState.entities")
             adapter.submitList(viewState.entities)
         }
     }
