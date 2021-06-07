@@ -46,6 +46,8 @@ internal class ViewState {
     val dateRange: MutableList<Calendar> = createDateRange(firstVisibleDate).validate(this).toMutableList()
     val dateRangeWithStartPixels: MutableList<Pair<Calendar, Float>> = mutableListOf()
 
+    var engineerNames: Array<String?> = emptyArray()
+
     // Drag & drop
     var dragState: DragState? = null
 
@@ -370,6 +372,9 @@ internal class ViewState {
             candidate
         }
     }
+
+    /**Set Engineer names from weekview*/
+
 
     private fun Calendar.computeDifferenceWithFirstDayOfWeek(): Int {
         val firstDayOfWeek = firstDayOfWeek

@@ -21,6 +21,8 @@ internal class HeaderRenderer(
     onHeaderHeightChanged: () -> Unit
 ) : Renderer, DateFormatterDependent {
 
+    var engineerNames: Array<String> = emptyArray()
+
     private val allDayEventLabels = ArrayMap<EventChip, StaticLayout>()
     private val dateLabelLayouts = SparseArray<StaticLayout>()
 
@@ -81,10 +83,19 @@ private class HeaderUpdater(
 
     override fun update() {
         val missingDates = viewState.dateRange.filterNot { labelLayouts.hasKey(it.toEpochDays()) }
-        for (date in missingDates) {
-            val key = date.toEpochDays()
-            labelLayouts.put(key, calculateStaticLayoutForDate(date))
+        missingDates.forEachIndexed { index, calendar ->
+            val key = calendar.toEpochDays()
+            labelLayouts.put(key, calculateStaticLayoutForDate(calendar, name = viewState.engineerNames[index]!!))
         }
+
+        /*  for (date in missingDates) {
+              val key = date.toEpochDays()
+              labelLayouts.put(key, calculateStaticLayoutForDate(date, name = element))
+          }
+
+          viewState.engineerNames.forEachIndexed{ index, element ->
+              labelLayouts.put(index, calculateStaticLayoutForDate2(name = element))
+          } */
 
         val dateLabels = viewState.dateRange.map { labelLayouts[it.toEpochDays()] }
         updateHeaderHeight(dateLabels)
@@ -120,14 +131,20 @@ private class HeaderUpdater(
         )
     }
 
-    private fun calculateStaticLayoutForDate(date: Calendar): StaticLayout {
+    private fun calculateStaticLayoutForDate(date: Calendar, name:String): StaticLayout {
         val dayLabel = viewState.dateFormatter(date)
         val textPaint = when {
             date.isToday -> viewState.todayHeaderTextPaint
             date.isWeekend -> viewState.weekendHeaderTextPaint
             else -> viewState.headerTextPaint
         }
-        return dayLabel.toTextLayout(textPaint = textPaint, width = viewState.dayWidth.toInt())
+        return name.toTextLayout(textPaint = textPaint, width = viewState.dayWidth.toInt())
+        //return dayLabel.toTextLayout(textPaint = textPaint, width = viewState.dayWidth.toInt())
+    }
+
+    private fun calculateStaticLayoutForDate2(name:String): StaticLayout {
+        val textPaint = viewState.weekendHeaderTextPaint
+        return name.toTextLayout(textPaint = textPaint, width = viewState.dayWidth.toInt())
     }
 
     private fun <E> SparseArray<E>.hasKey(key: Int): Boolean = indexOfKey(key) >= 0

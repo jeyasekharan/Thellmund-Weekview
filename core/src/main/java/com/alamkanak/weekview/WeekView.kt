@@ -33,6 +33,11 @@ class WeekView @JvmOverloads constructor(
 
     private val touchHandler = WeekViewTouchHandler(viewState)
 
+    fun setEngineerNames(engineerNames: Array<String?>) {
+        viewState.engineerNames = engineerNames
+        invalidate()
+    }
+
     private val navigationListener = object : Navigator.NavigationListener {
         override fun onHorizontalScrollPositionChanged() {
             invalidate()
@@ -203,6 +208,7 @@ class WeekView @JvmOverloads constructor(
             )
         }
     }
+
 
     private fun notifyVerticalScrollChanged(distance: Float) {
         if (abs(distance) >= 1f) {
@@ -1473,6 +1479,8 @@ class WeekView @JvmOverloads constructor(
         }
         invalidate()
     }
+
+
 
     override fun dispatchHoverEvent(event: MotionEvent): Boolean {
         if (accessibilityTouchHelper.dispatchHoverEvent(event)) {

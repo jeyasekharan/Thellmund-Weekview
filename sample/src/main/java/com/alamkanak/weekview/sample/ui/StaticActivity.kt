@@ -1,6 +1,5 @@
 package com.alamkanak.weekview.sample.ui
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +11,7 @@ import com.alamkanak.weekview.sample.R
 import com.alamkanak.weekview.sample.data.model.CalendarEntity
 import com.alamkanak.weekview.sample.data.model.toWeekViewEntity
 import com.alamkanak.weekview.sample.databinding.ActivityStaticBinding
-import com.alamkanak.weekview.sample.models.EventUtils.getData
+import com.alamkanak.weekview.sample.models.EventUtils
 import com.alamkanak.weekview.sample.models.Events
 import com.alamkanak.weekview.sample.util.*
 import java.time.LocalDate
@@ -28,6 +27,7 @@ class StaticActivity : AppCompatActivity() {
     }
     var arrayList: ArrayList<List<Events>>? = null
     var alFlatEvents: List<Events>? = null
+    lateinit var engineerNames: Array<String?>
 
     private val viewModel by genericViewModel()
 
@@ -45,20 +45,27 @@ class StaticActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Get data and flatten
-        arrayList = getData()
+        arrayList = EventUtils.getData()
+        engineerNames = EventUtils.setEngineerColumnNames()
         alFlatEvents = arrayList!!.flatten()
 
 
-       // val time = LocalDateTime.of(year= "2021")
+        // val time = LocalDateTime.of(year= "2021")
         // Map to Calendar Entity
 
         //alFlatEvents!!.map { CalendarEntity.Event(it.id.toLong(), it.title, "2021-05-03T20:00", it.endTime,
-         //    it.location, Color.parseColor("#00ff00"), false, false) }
+        //it.location, Color.parseColor("#00ff00"), false, false) }
 
 
 
         binding.toolbarContainer.toolbar.setupWithWeekView(binding.weekView)
         binding.weekView.adapter = adapter
+
+        //binding.weekView.setEngineerNames(arrayOf("name1 ","name 2", "name 3", "name 4", "name 5"))
+        engineerNames.let {
+            binding.weekView.setEngineerNames(it)
+        }
+        binding.weekView.numberOfVisibleDays = 5
 
         binding.leftNavigationButton.setOnClickListener {
             val firstDate = binding.weekView.firstVisibleDateAsLocalDate
