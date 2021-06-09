@@ -30,6 +30,8 @@ internal class TextFitter(
         return eventChip.fitText(availableWidth, availableHeight)
     }
 
+
+    // Converts Event Chip to Static Layout
     private fun EventChip.fitText(availableWidth: Int, availableHeight: Int): StaticLayout {
         val textPaint = viewState.getTextPaint(event)
 

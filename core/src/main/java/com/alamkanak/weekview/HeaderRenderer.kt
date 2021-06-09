@@ -83,17 +83,22 @@ private class HeaderUpdater(
 
     override fun update() {
         val missingDates = viewState.dateRange.filterNot { labelLayouts.hasKey(it.toEpochDays()) }
+
+
+        /** Setting engineer names for heading */
         missingDates.forEachIndexed { index, calendar ->
             val key = calendar.toEpochDays()
             labelLayouts.put(key, calculateStaticLayoutForDate(calendar, name = viewState.engineerNames[index]!!))
         }
 
-        /*  for (date in missingDates) {
-              val key = date.toEpochDays()
-              labelLayouts.put(key, calculateStaticLayoutForDate(date, name = element))
-          }
 
-          viewState.engineerNames.forEachIndexed{ index, element ->
+        /** Original Code*/
+    /*      for (date in missingDates) {
+              val key = date.toEpochDays()
+              labelLayouts.put(key, calculateStaticLayoutForDateOriginal(date))
+          }
+*/
+       /*   viewState.engineerNames.forEachIndexed{ index, element ->
               labelLayouts.put(index, calculateStaticLayoutForDate2(name = element))
           } */
 
@@ -129,6 +134,17 @@ private class HeaderUpdater(
                 onHeaderHeightChanged()
             }
         )
+    }
+
+
+    private fun calculateStaticLayoutForDateOriginal(date: Calendar): StaticLayout {
+        val dayLabel = viewState.dateFormatter(date)
+        val textPaint = when {
+            date.isToday -> viewState.todayHeaderTextPaint
+            date.isWeekend -> viewState.weekendHeaderTextPaint
+            else -> viewState.headerTextPaint
+        }
+        return dayLabel.toTextLayout(textPaint = textPaint, width = viewState.dayWidth.toInt())
     }
 
     private fun calculateStaticLayoutForDate(date: Calendar, name:String): StaticLayout {

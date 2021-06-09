@@ -1,10 +1,13 @@
 package com.alamkanak.weekview
 
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
+import android.text.Layout
+import android.text.SpannableStringBuilder
 import android.text.StaticLayout
+import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
 
 internal class EventChipDrawer(
     private val viewState: ViewState
@@ -56,7 +59,122 @@ internal class EventChipDrawer(
         if (textLayout != null) {
             drawEventTitle(eventChip, textLayout)
         }
+
     }
+
+/*    private fun drawEventTitle(
+        event: WeekViewEntity.Event,
+        rect: RectF,
+        canvas: Canvas,
+        originalTop: Float,
+        originalLeft: Float
+    ) {
+
+        // Prepare the name of the event.
+        val bob = SpannableStringBuilder()
+        var len = 0
+        if (event.getName() != null) {
+            bob.append(event.getEventName())
+            bob.setSpan(StyleSpan(Typeface.BOLD), 0, bob.length, 0)
+            len = bob.length
+        }
+
+        // Event Engineer id
+        bob.append(
+            """
+
+
+            Engineer Id : ${event.getEngineerName()}
+            """.trimIndent()
+        )
+        bob.setSpan(RelativeSizeSpan(1f), len, bob.length, 0)
+        len = bob.length
+
+
+        // Event Address
+        if (event.getLocation() != null) {
+            len = bob.length
+            bob.append("\n\n").append(event.getLocation())
+        }
+        val fcs_subtitle = ForegroundColorSpan(Color.rgb(151, 151, 151))
+        bob.setSpan(fcs_subtitle, len, bob.length, 0)
+        bob.append("\n\n")
+        //bob.append("Estimate   ");
+        len = bob.length
+        when (event.getJobEventType()) {
+            1 -> {
+
+                // NORMAL_EVENT
+                setEventsIconsBasedOnType(
+                    bob, R.drawable.ic_job_grey, R.drawable.ic_status_red,
+                    "Job", "Status"
+                )
+            }
+            2 -> {
+
+                // ESTIMATE_JOB_EVENT Event
+                setEventsIconsBasedOnType(
+                    bob, R.drawable.ic_estimate_grey_e, R.drawable.ic_status_blue,
+                    "Estimate", "Status"
+                )
+            }
+            3 -> {
+
+                // NORMAL_JOB_EVENT
+                setEventsIconsBasedOnType(
+                    bob, R.drawable.ic_estimate_grey_e, R.drawable.ic_status_orange,
+                    "Estimate", "Status"
+                )
+            }
+        }
+        val availableHeight = (rect.bottom - originalTop - mEventPadding * 2) as Int
+        val availableWidth = (rect.right - originalLeft - mEventPadding * 2) as Int
+        mEventTextPaint.setColor(Color.BLACK)
+        // Get text dimensions.
+        var textLayout = StaticLayout(
+            bob,
+            mEventTextPaint,
+            availableWidth,
+            Layout.Alignment.ALIGN_NORMAL,
+            1.0f,
+            0.0f,
+            false
+        )
+        val lineHeight = textLayout.height / textLayout.lineCount
+        if (availableHeight >= lineHeight) {
+            // Calculate available number of line counts.
+            var availableLineCount = availableHeight / lineHeight
+            do {
+                // Ellipsize text to fit into event rect.
+                textLayout = StaticLayout(
+                    TextUtils.ellipsize(
+                        bob,
+                        mEventTextPaint,
+                        (availableLineCount * availableWidth).toFloat(),
+                        TextUtils.TruncateAt.END
+                    ),
+                    mEventTextPaint,
+                    (rect.right - originalLeft - mEventPadding * 2) as Int,
+                    Layout.Alignment.ALIGN_NORMAL,
+                    1.0f,
+                    0.0f,
+                    false
+                )
+
+                // Reduce line count.
+                availableLineCount--
+
+                // Repeat until text is short enough.
+            } while (textLayout.height > availableHeight)
+
+            // Draw text.
+            canvas.save()
+            canvas.translate(originalLeft + mEventPadding, originalTop + mEventPadding)
+            textLayout.draw(canvas)
+            canvas.restore()
+        }
+    }*/
+
 
     private fun Canvas.drawCornersForMultiDayEvents(
         eventChip: EventChip,

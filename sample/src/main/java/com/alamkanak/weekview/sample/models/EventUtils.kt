@@ -20,6 +20,7 @@ object EventUtils {
         val listType: Type = object : TypeToken<List<Events?>?>() {}.type
         val arList = Gson().fromJson<List<Events>>(EventData2.events, listType)
 
+        Log.e("arlist  ", " ar list ${arList}")
         val totalEvents = arList.size
 
         /* Grouping events by engineers id  */
@@ -119,7 +120,6 @@ object EventUtils {
         val eventsData = getFiveEvents(arList, keysEngineer)
 
         return eventsData
-
     }
 
 

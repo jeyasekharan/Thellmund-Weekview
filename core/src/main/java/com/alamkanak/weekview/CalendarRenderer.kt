@@ -213,6 +213,8 @@ private class BackgroundGridDrawer(
     }
 }
 
+
+/** Single Events Drawer */
 private class SingleEventsDrawer(
     private val viewState: ViewState,
     private val chipsCacheProvider: EventChipsCacheProvider,

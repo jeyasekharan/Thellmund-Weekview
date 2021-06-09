@@ -59,7 +59,7 @@
         app:headerPadding="12dp"
         app:headerTextColor="@color/gray_600"
         app:horizontalScrollingEnabled="false"
-        app:hourHeight="60dp"
+        app:hourHeight="100dp"
         app:nowLineColor="@color/accent"
         app:nowLineDotColor="@color/accent"
         app:nowLineDotRadius="5dp"

@@ -1,18 +1,18 @@
 package com.alamkanak.weekview
 
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Build
-import android.text.Layout
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.StaticLayout
-import android.text.TextPaint
+import android.text.*
+import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan
 import com.alamkanak.weekview.base.TextProcessors
 
 internal val CharSequence.processed: CharSequence
     get() = TextProcessors.process(this)
 
+
+// Converts text to static layout
 internal fun CharSequence.toTextLayout(
     textPaint: TextPaint,
     width: Int,
@@ -21,15 +21,40 @@ internal fun CharSequence.toTextLayout(
     spacingExtra: Float = 0f,
     includePad: Boolean = false
 ) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
     StaticLayout.Builder
         .obtain(this, 0, length, textPaint, width)
         .setAlignment(alignment)
         .setLineSpacing(spacingExtra, spacingMultiplier)
         .setIncludePad(includePad)
         .build()
+
 } else {
     @Suppress("DEPRECATION")
     StaticLayout(this, textPaint, width, alignment, spacingMultiplier, spacingExtra, includePad)
+}
+
+
+internal fun getTestText(): SpannableStringBuilder {
+
+    // Prepare the name of the event.
+    val bob = SpannableStringBuilder()
+    var len = 0
+        bob.append("Test Event")
+        bob.setSpan(StyleSpan(Typeface.BOLD), 0, bob.length, 0)
+        len = bob.length
+
+    bob.append("\n")
+    bob.append("\nEngineer test iddddd")
+
+    // Event Engineer id
+    bob.append(
+        """
+            Engineer Id : test id 555555555555555555555555555
+            """.trimIndent()
+    )
+
+    return bob
 }
 
 internal val StaticLayout.maxLineLength: Float

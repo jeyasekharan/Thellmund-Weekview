@@ -1,5 +1,7 @@
 package com.alamkanak.weekview.sample.models
 
+import com.alamkanak.weekview.sample.data.model.CalendarEntity
+
 data class Events(val username:String,
                   val engineer_id:String,
                   val id: String,
