@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -59,7 +60,7 @@
         app:headerPadding="12dp"
         app:headerTextColor="@color/gray_600"
         app:horizontalScrollingEnabled="false"
-        app:hourHeight="100dp"
+        app:hourHeight="120dp"
         app:nowLineColor="@color/accent"
         app:nowLineDotColor="@color/accent"
         app:nowLineDotRadius="5dp"
