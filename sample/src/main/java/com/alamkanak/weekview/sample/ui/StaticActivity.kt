@@ -32,7 +32,6 @@ class StaticActivity : AppCompatActivity() {
         ActivityStaticBinding.inflate(layoutInflater)
     }
     var arrayList: ArrayList<List<Events>>? = null
-    var alFlatEvents: List<Events>? = null
 
     var fiveSingleArray: ArrayList<Events>? = ArrayList<Events>()
     var fiveSingleArrayCalendarEntity: ArrayList<CalendarEntity.Event>? =
@@ -43,6 +42,8 @@ class StaticActivity : AppCompatActivity() {
     private val viewModel by genericViewModel()
 
     private val dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
+
+    var currDate:String? = null
 
     val arrFromToday = arrayOf("2021-06-10", "2021-06-10", "2021-06-10", "2021-06-12", "2021-06-13")
 
@@ -70,10 +71,12 @@ class StaticActivity : AppCompatActivity() {
 
         val dateFormatter: DateFormat = SimpleDateFormat("yyyy-MM-dd")
         val s: String = dateFormatter.format(date)
+        currDate = s
+        setDateText(s)
         return s
     }
 
-    private fun getTodayPlusFiveDate() {
+    private fun getTodayPlusFiveDateForEngineerHeading() {
         val date = Calendar.getInstance().time
 
         val dateFormatter: DateFormat = SimpleDateFormat("yyyy-MM-dd")
@@ -204,8 +207,8 @@ class StaticActivity : AppCompatActivity() {
         return format.format(calendar.time)
     }
 
-    fun setDate() {
-
+    fun setDateText(date:String) {
+         binding.dateRangeTextView.text = date
     }
 
 
@@ -215,22 +218,19 @@ class StaticActivity : AppCompatActivity() {
 
         // Get data and flatten
         arrayList = EventUtils.getData()
-        val arrayListForToday = EventUtils.getDataForSingleDate(getTodayDate())
+        val arrayListForToday = EventUtils.getDataForSingleDate("2021-05-29")
+
+        //Set Engineer column names
         engineerNames = EventUtils.setEngineerColumnNames()
-        alFlatEvents = arrayList!!.flatten()
 
         // Get Five Days for the heading
-        getTodayPlusFiveDate()
+        getTodayPlusFiveDateForEngineerHeading()
 
         //Convert Engineer JSON to Engineer Models
         UserDetails.getModelFromJson()
 
-        // Take only single event
-        for (event in arrayList!!) {
-            fiveSingleArray?.add(event[0])
-        }
-
-        arrayList!!.forEachIndexed { index, list ->
+        // Convert engineers to calendar entity also change heading names
+        arrayListForToday!!.forEachIndexed { index, list ->
             list.map {
                 fiveSingleArrayCalendarEntity!!.add(
                     CalendarEntity.Event(
@@ -295,23 +295,22 @@ class StaticActivity : AppCompatActivity() {
              }*/
 
         viewModel.viewState.observe(this) { viewState ->
-            Log.e("entittieeeee  ", " entitess    ${fiveSingleArrayCalendarEntity!![0]}")
-            adapter.submitList(fiveSingleArrayCalendarEntity!!)
+            fiveSingleArrayCalendarEntity?.let {
+                adapter.submitList(it)
+            }
             //  adapter.submitList(viewState.entities)
         }
     }
 
     private fun goToNextEvent() {
+      // setDateText()
 
-       // binding.dateRangeTextView.text = buildDateRangeText(startDate, endDate)
-
+       adapter.submitList(fiveSingleArrayCalendarEntity!!)
     }
 
     private fun goToPrevEvent() {
-
-
-       // binding.dateRangeTextView.text = buildDateRangeText(startDate, endDate)
-
+       // setDateText()
+        adapter.submitList(fiveSingleArrayCalendarEntity!!)
     }
 
 
