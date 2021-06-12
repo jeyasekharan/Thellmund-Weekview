@@ -39,6 +39,36 @@ object EventUtils {
     }
 
 
+    fun getDataForSingleDate(date:String): ArrayList<List<Events>>? {
+
+        var arValues: ArrayList<List<Events>>? = null
+
+        /* Convert string data to Class  */
+        val listType: Type = object : TypeToken<List<Events?>?>() {}.type
+        val arList = Gson().fromJson<List<Events>>(EventData2.events, listType)
+
+
+        val todayEvents = arList.filter { it.startDate.substring(0,11) == date }
+        Log.e(" today list  ", " today list ${todayEvents}")
+
+        Log.e("   date date date  ", " date ${date}")
+
+
+        /* Grouping events by engineers id  */
+        eventGroupedOnEngineerIDs = todayEvents.groupBy { it.engineer_id }
+
+        /* Set adapter */
+        eventGroupedOnEngineerIDs?.let {
+            arValues = setGridAdapter(it)
+        }
+
+        arrFiveGroupsArrayKeys = DiaryData.splitInto5Keys(eventGroupedOnEngineerIDs!!)
+
+        keysEngineer = DiaryData.getKeyIndex(arrFiveGroupsArrayKeys, 0)
+
+        return arValues
+    }
+
     fun setEngineerColumnNames(): Array<String?> {
 
         var arValues: ArrayList<List<Events>>? = null
@@ -63,12 +93,12 @@ object EventUtils {
 
 
         /* Engineer keys are grouped into five each*/
-        val users = UserDetails.getModelFromJson()
+        UserDetails.getModelFromJson()
 
         var usersNames = arrayOfNulls<String>(10) // returns Array<String?>
 
         keysEngineer.forEachIndexed { index, key ->
-            val user = users?.first { it.user_id.toString() == key }
+            val user = UserDetails.arList?.first { it.user_id.toString() == key }
             usersNames[index] = user?.username!!
         }
 

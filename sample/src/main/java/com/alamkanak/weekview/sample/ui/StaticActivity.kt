@@ -12,15 +12,11 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.alamkanak.weekview.WeekViewEntity
 import com.alamkanak.weekview.jsr310.WeekViewPagingAdapterJsr310
-import com.alamkanak.weekview.jsr310.firstVisibleDateAsLocalDate
-import com.alamkanak.weekview.jsr310.scrollToDate
 import com.alamkanak.weekview.sample.R
 import com.alamkanak.weekview.sample.data.model.CalendarEntity
 import com.alamkanak.weekview.sample.data.model.toWeekViewEntity
 import com.alamkanak.weekview.sample.databinding.ActivityStaticBinding
-import com.alamkanak.weekview.sample.models.CenterVerticalSpan
-import com.alamkanak.weekview.sample.models.EventUtils
-import com.alamkanak.weekview.sample.models.Events
+import com.alamkanak.weekview.sample.models.*
 import com.alamkanak.weekview.sample.util.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -39,7 +35,8 @@ class StaticActivity : AppCompatActivity() {
     var alFlatEvents: List<Events>? = null
 
     var fiveSingleArray: ArrayList<Events>? = ArrayList<Events>()
-    var fiveSingleArrayCalendarEntity: List<CalendarEntity.Event>? = ArrayList<CalendarEntity.Event>()
+    var fiveSingleArrayCalendarEntity: ArrayList<CalendarEntity.Event>? =
+        ArrayList<CalendarEntity.Event>()
 
     lateinit var engineerNames: Array<String?>
 
@@ -47,7 +44,7 @@ class StaticActivity : AppCompatActivity() {
 
     private val dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
 
-    val arrFromToday = arrayOf("2021-06-10","2021-06-10","2021-06-10","2021-06-12","2021-06-13")
+    val arrFromToday = arrayOf("2021-06-10", "2021-06-10", "2021-06-10", "2021-06-12", "2021-06-13")
 
     private val adapter: StaticActivityWeekViewAdapter by lazy {
         StaticActivityWeekViewAdapter(
@@ -56,40 +53,48 @@ class StaticActivity : AppCompatActivity() {
         )
     }
 
-    private fun processEventTime(index:Int, datetime: String): LocalDateTime {
+    private fun processEventTime(index: Int, datetime: String): LocalDateTime {
         //time = 2021-05-29 08:00:00.0//
 
         val strArr = datetime.split(" ")
-        val time = strArr[1].substring(0,5)
+        val time = strArr[1].substring(0, 5)
 
-        val localString = arrFromToday[index]+"T"+strArr[1]
+        val localString = arrFromToday[index] + "T" + strArr[1]
         Log.e("local String  ", "  local String $localString")
 
         return LocalDateTime.parse(localString)
     }
 
-    /*private fun getEngineerNameFromID(engineerID: String): String {
-
-    }*/
-
-    private fun getTodayDate() {
+    private fun getTodayDate(): String {
         val date = Calendar.getInstance().time
 
         val dateFormatter: DateFormat = SimpleDateFormat("yyyy-MM-dd")
         val s: String = dateFormatter.format(date)
-        Log.e(" today date  ", "  today date $date")
+        return s
+    }
+
+    private fun getTodayPlusFiveDate() {
+        val date = Calendar.getInstance().time
+
+        val dateFormatter: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val s: String = dateFormatter.format(date)
 
         for (i in 0..4) {
-            val nextDate = getNextDate(s, incrementBy=i)
-            Log.e(" next date  ", "  next date $nextDate")
+            val nextDate = getNextFiveDates(s, incrementBy = i)
             nextDate?.let {
                 arrFromToday[i] = it
             }
         }
-
     }
 
-    fun processTitle(title: String, engineer: String, location: String?, jobEventType: Int?) : SpannableStringBuilder {
+    fun processTitle(
+        title: String,
+        engineerID: String,
+        location: String?,
+        jobEventType: Int?
+    ): SpannableStringBuilder {
+
+        val engineerName = UserDetails.getNameFromEngineerID(engineerID.toInt())
 
         // Prepare the name of the event.
         val bob = SpannableStringBuilder()
@@ -98,17 +103,17 @@ class StaticActivity : AppCompatActivity() {
         bob.setSpan(StyleSpan(Typeface.BOLD), 0, bob.length, 0)
         len = bob.length
 
-       bob.append("\n")
-            bob.append("\nEngineer $engineer")
-           bob.append("\n")
-           bob.append("\n")
-           len = bob.length
+        bob.append("\n")
+        bob.append("\n${engineerName}")
+        bob.append("\n")
+        bob.append("\n")
+        len = bob.length
 
-           location?.let {
-               // Event Engineer id
-               bob.append(it)
-               bob.append("\n")
-           }
+        location?.let {
+            // Event Engineer id
+            bob.append(it)
+            bob.append("\n")
+        }
         // Set according to job event type
         when (jobEventType) {
             1 -> {
@@ -169,7 +174,7 @@ class StaticActivity : AppCompatActivity() {
 
 
         // Drawable Right
-        val d2: Drawable? =  applicationContext.resources.getDrawable(rightDrawable, null)
+        val d2: Drawable? = applicationContext.resources.getDrawable(rightDrawable, null)
         d2!!.setBounds(0, 0, 50, 50)
         val newStr2 = d2.toString()
         bob.append(newStr2)
@@ -190,7 +195,7 @@ class StaticActivity : AppCompatActivity() {
     }
 
 
-    fun getNextDate(curDate: String?, incrementBy: Int): String? {
+    fun getNextFiveDates(curDate: String?, incrementBy: Int): String? {
         val format = SimpleDateFormat("yyyy-MM-dd")
         val date = format.parse(curDate)
         val calendar = Calendar.getInstance()
@@ -199,38 +204,69 @@ class StaticActivity : AppCompatActivity() {
         return format.format(calendar.time)
     }
 
+    fun setDate() {
+
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         // Get data and flatten
         arrayList = EventUtils.getData()
+        val arrayListForToday = EventUtils.getDataForSingleDate(getTodayDate())
         engineerNames = EventUtils.setEngineerColumnNames()
         alFlatEvents = arrayList!!.flatten()
 
-        getTodayDate()
+        // Get Five Days for the heading
+        getTodayPlusFiveDate()
 
-        //val time = LocalDateTime.of(year= "2021")
-        // Map to Calendar Entity
+        //Convert Engineer JSON to Engineer Models
+        UserDetails.getModelFromJson()
 
+        // Take only single event
         for (event in arrayList!!) {
             fiveSingleArray?.add(event[0])
         }
 
-        fiveSingleArrayCalendarEntity = fiveSingleArray!!.mapIndexed { index, it ->  CalendarEntity.Event(it.id.toLong() ?: 123,
-            processTitle(it.title ,  it.engineer_id , it.location, it.jobEventType),
-            startTime =  processEventTime(index, it.startDate),
-            endTime = processEventTime(index, it.endDate),  "",
-            Color.parseColor("#bbbbbd"), false,  isCanceled= false) }
+        arrayList!!.forEachIndexed { index, list ->
+            list.map {
+                fiveSingleArrayCalendarEntity!!.add(
+                    CalendarEntity.Event(
+                        it.id.toLong() ?: 123,
+                        processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
+                        startTime = processEventTime(index, it.startDate),
+                        endTime = processEventTime(index, it.endDate), "",
+                        Color.parseColor("#bbbbbd"), false, isCanceled = false
+                    )
+                )
+            }
+        }
+
+        fiveSingleArrayCalendarEntity!!.forEachIndexed { index, event ->
+            Log.e("   reformed  ", "  ${event.startTime}   endtime  ${event.endTime}")
+        }
 
 
-       // alFlatEvents!!.map { CalendarEntity.Event(it.id.toLong(), it.title, startTime =  "2021-05-03T20:00", it.endTime,
-       // it.location, 12345, false, false) }
+        // Convert Single Event to Calendar Event
+        /*  fiveSingleArrayCalendarEntity = fiveSingleArray!!.mapIndexed { index, it ->
+              CalendarEntity.Event(
+                  it.id.toLong() ?: 123,
+                  processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
+                  startTime = processEventTime(index, it.startDate),
+                  endTime = processEventTime(index, it.endDate), "",
+                  Color.parseColor("#bbbbbd"), false, isCanceled = false
+              )
+          }*/
+
+        // alFlatEvents!!.map { CalendarEntity.Event(it.id.toLong(), it.title, startTime =  "2021-05-03T20:00", it.endTime,
+        // it.location, 12345, false, false) }
 
         binding.toolbarContainer.toolbar.setupWithWeekView(binding.weekView)
         binding.weekView.adapter = adapter
 
-        binding.weekView.setEngineerNames(arrayOf("name1 ","name 2", "name 3", "name 4", "name 5"))
+        binding.weekView.setEngineerNames(arrayOf("name1 ", "name 2", "name 3", "name 4", "name 5"))
         engineerNames.let {
             binding.weekView.setEngineerNames(it)
         }
@@ -238,22 +274,44 @@ class StaticActivity : AppCompatActivity() {
 
 
         binding.leftNavigationButton.setOnClickListener {
-            val firstDate = binding.weekView.firstVisibleDateAsLocalDate
-            val newFirstDate = firstDate.minusDays(7)
-            binding.weekView.scrollToDate(newFirstDate)
+            goToPrevEvent()
         }
 
         binding.rightNavigationButton.setOnClickListener {
-            val firstDate = binding.weekView.firstVisibleDateAsLocalDate
-            val newFirstDate = firstDate.plusDays(7)
-            binding.weekView.scrollToDate(newFirstDate)
+            goToNextEvent()
         }
+
+        /** Default codes hidden  */
+        /*     binding.leftNavigationButton.setOnClickListener {
+                 val firstDate = binding.weekView.firstVisibleDateAsLocalDate
+                 val newFirstDate = firstDate.minusDays(7)
+                 binding.weekView.scrollToDate(newFirstDate)
+             }
+
+             binding.rightNavigationButton.setOnClickListener {
+                 val firstDate = binding.weekView.firstVisibleDateAsLocalDate
+                 val newFirstDate = firstDate.plusDays(7)
+                 binding.weekView.scrollToDate(newFirstDate)
+             }*/
 
         viewModel.viewState.observe(this) { viewState ->
             Log.e("entittieeeee  ", " entitess    ${fiveSingleArrayCalendarEntity!![0]}")
             adapter.submitList(fiveSingleArrayCalendarEntity!!)
-          //  adapter.submitList(viewState.entities)
+            //  adapter.submitList(viewState.entities)
         }
+    }
+
+    private fun goToNextEvent() {
+
+       // binding.dateRangeTextView.text = buildDateRangeText(startDate, endDate)
+
+    }
+
+    private fun goToPrevEvent() {
+
+
+       // binding.dateRangeTextView.text = buildDateRangeText(startDate, endDate)
+
     }
 
 

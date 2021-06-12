@@ -218,13 +218,19 @@ class UserDetails {
 ] 
 """
 
-        fun getModelFromJson(): List<Users>? {
+        var arList: List<Users>? = null
+
+        fun getModelFromJson() {
             /* Convert string data to Class  */
 
             val listType: Type = object : TypeToken<List<Users>>() {}.type
-            val arList = Gson().fromJson<List<Users>>(users, listType)
+            arList = Gson().fromJson<List<Users>>(users, listType)
+        }
 
-            return arList
+        fun getNameFromEngineerID(id: Int): String? {
+
+            val engineerName = arList?.filter { it.user_id == id }?.first()?.username
+            return engineerName
         }
     }
 
