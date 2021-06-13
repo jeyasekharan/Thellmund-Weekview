@@ -20,7 +20,6 @@ object EventUtils {
         val listType: Type = object : TypeToken<List<Events?>?>() {}.type
         val arList = Gson().fromJson<List<Events>>(EventData2.events, listType)
 
-        Log.e("arlist  ", " ar list ${arList}")
         val totalEvents = arList.size
 
         /* Grouping events by engineers id  */
@@ -49,7 +48,6 @@ object EventUtils {
 
 
         val todayEvents = arList.filter {
-            Log.e(" comparison list  ", " comparison${it.startDate.substring(0, 10)}$date+condition   ${it.startDate.substring(0, 10) == date} ")
 
             it.startDate.substring(0, 10) == date
         }
@@ -107,13 +105,35 @@ object EventUtils {
         return usersNames
     }
 
+    fun getEngineerColumnNames(): Array<String?> {
 
+        arrFiveGroupsArrayKeys = DiaryData.splitInto5Keys(eventGroupedOnEngineerIDs!!)
+
+        EventUtils.keysEngineer = DiaryData.getKeyIndex(arrFiveGroupsArrayKeys, usersListIndex)
+
+
+        /* Engineer keys are grouped into five each*/
+        UserDetails.getModelFromJson()
+
+        var usersNames = arrayOfNulls<String>(10) // returns Array<String?>
+
+        keysEngineer.forEachIndexed { index, key ->
+            val user = UserDetails.arEngineersObjectList?.first { it.user_id.toString() == key }
+            usersNames[index] = user?.username!!
+        }
+
+        return usersNames
+    }
+
+
+
+    // Get events from engineers Index
     fun setGridAdapter(arList: Map<String, List<Events>>): ArrayList<List<Events>> {
 
         var arList2: Map.Entry<String, List<Events>>
         var nameIndex = 0
 
-        /* This code will fetch 3 engineers name and place it in heading */
+        /* This code will fetch 3 engineers name and place it in heading
         arList.forEach lit@{
 
             if (nameIndex == 5) {
@@ -140,7 +160,7 @@ object EventUtils {
                 }
             }
             nameIndex++
-        }
+        }*/
 
         /* Take list of 5 engineers id from data */
 
@@ -148,7 +168,7 @@ object EventUtils {
 
         /* Engineer keys are grouped into five each*/
         if (arrFiveGroupsArrayKeys.isNotEmpty()) {
-            keysEngineer = DiaryData.getKeyIndex(arrFiveGroupsArrayKeys, 0)
+            keysEngineer = DiaryData.getKeyIndex(arrFiveGroupsArrayKeys, usersListIndex)
         }
 
         val eventsData = getFiveEvents(arList, keysEngineer)
@@ -171,13 +191,12 @@ object EventUtils {
                 eventsBasedOnEngineers.add(arList[keysEngineer[i]]!!)
             }
         }
-
         return eventsBasedOnEngineers
     }
 
 
     /* Scroll users left and right */
-    fun increaseIndex(): ArrayList<List<Events>>? {
+    fun increaseEngineerIndex(): ArrayList<List<Events>>? {
         var eventsData: ArrayList<List<Events>>? = null
         Log.e("this checking    ", " decreases   $usersListIndex")
         if (usersListIndex > 0) {
@@ -185,7 +204,7 @@ object EventUtils {
 
             keysEngineer = DiaryData.getKeyIndex(arrFiveGroupsArrayKeys, usersListIndex)
 
-            setEngineerColumnNames()
+            //setEngineerColumnNames()
             Log.e(
                 "this checking    ",
                 " this checking   $keysEngineer    $eventGroupedOnEngineerIDs"
@@ -203,7 +222,7 @@ object EventUtils {
     }
 
 
-    fun decreaseIndex(): ArrayList<List<Events>>? {
+    fun decreaseEngineerIndex(): ArrayList<List<Events>>? {
         var eventsData: ArrayList<List<Events>>? = null
         Log.e("this checking    ", " increases  $usersListIndex ")
 
@@ -212,7 +231,7 @@ object EventUtils {
 
             keysEngineer = DiaryData.getKeyIndex(arrFiveGroupsArrayKeys, usersListIndex)
 
-            setEngineerColumnNames()
+           // setEngineerColumnNames()
             Log.e("this checking    ", " this checking   $keysEngineer ")
 
             eventGroupedOnEngineerIDs?.let {

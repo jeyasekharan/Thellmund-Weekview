@@ -61,7 +61,6 @@ class StaticActivity : AppCompatActivity() {
         val time = strArr[1].substring(0, 5)
 
         val localString = arrFromToday[index] + "T" + strArr[1]
-        Log.e("local String  ", "  local String $localString")
 
         return LocalDateTime.parse(localString)
     }
@@ -219,6 +218,8 @@ class StaticActivity : AppCompatActivity() {
         // Get data and flatten
         arrayList = EventUtils.getData()
         val arrayListForToday = EventUtils.getDataForSingleDate("2021-05-29")
+        currDate = "2021-05-29"
+        binding.dateRangeTextView.text = currDate
 
         //Set Engineer column names
         engineerNames = EventUtils.setEngineerColumnNames()
@@ -245,7 +246,7 @@ class StaticActivity : AppCompatActivity() {
         }
 
         fiveSingleArrayCalendarEntity!!.forEachIndexed { index, event ->
-            Log.e("   reformed  ", "  ${event.startTime}   endtime  ${event.endTime}")
+            Log.e("   reformed  ", "  ${event}")
         }
 
 
@@ -274,11 +275,11 @@ class StaticActivity : AppCompatActivity() {
 
 
         binding.leftNavigationButton.setOnClickListener {
-            goToPrevEvent()
+            goToPrevDateEvent()
         }
 
         binding.rightNavigationButton.setOnClickListener {
-            goToNextEvent()
+            goToNextDateEvent()
         }
 
         /** Default codes hidden  */
@@ -302,17 +303,145 @@ class StaticActivity : AppCompatActivity() {
         }
     }
 
-    private fun goToNextEvent() {
-      // setDateText()
+    // Right arrow next button clicked
+    private fun goToNextDateEvent() {
+        val format = SimpleDateFormat("yyyy-MM-dd")
+        currDate?.let { it ->
 
-       adapter.submitList(fiveSingleArrayCalendarEntity!!)
+            // Go to next date
+            val date = format.parse(it)
+            val calendar = Calendar.getInstance()
+            calendar.time = date!!
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            currDate = format.format(calendar.time)
+
+            // Set heading text
+            setDateText(currDate!!)
+            Log.e("next date button press", "  $currDate")
+
+            // Get the events for the particular date
+            val arrayListForToday = EventUtils.getDataForSingleDate(currDate!!)
+
+            // Clear previous events and add the next items
+            fiveSingleArrayCalendarEntity?.clear()
+
+            // Convert engineers to calendar entity also change heading names
+            arrayListForToday?.forEachIndexed { index, list ->
+                list.map { it ->
+                    fiveSingleArrayCalendarEntity!!.add(
+                        CalendarEntity.Event(
+                            it.id.toLong() ?: 123,
+                            processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
+                            startTime = processEventTime(index, it.startDate),
+                            endTime = processEventTime(index, it.endDate), "",
+                            Color.parseColor("#bbbbbd"), false, isCanceled = false
+                        )
+                    )
+                }
+            }
+            Log.e("next date events", "  $fiveSingleArrayCalendarEntity")
+
+            adapter.submitList(fiveSingleArrayCalendarEntity!!)
+        }
     }
 
-    private fun goToPrevEvent() {
+
+    //Left arrow date pressed button
+    private fun goToPrevDateEvent() {
        // setDateText()
-        adapter.submitList(fiveSingleArrayCalendarEntity!!)
+        val format = SimpleDateFormat("yyyy-MM-dd")
+        currDate?.let { it ->
+
+            // Go to next date
+            val date = format.parse(it)
+            val calendar = Calendar.getInstance()
+            calendar.time = date!!
+            calendar.add(Calendar.DAY_OF_YEAR, -1)
+            currDate = format.format(calendar.time)
+
+            Log.e("prev date button press", "  $currDate")
+            // Set heading text
+            setDateText(currDate!!)
+
+            // Get the events for the particular date
+            val arrayListForToday = EventUtils.getDataForSingleDate(currDate!!)
+            Log.e("prev date events", "  $arrayListForToday")
+
+            // Clear previous events and add the next items
+            fiveSingleArrayCalendarEntity?.clear()
+
+            // Convert engineers to calendar entity also change heading names
+            arrayListForToday?.forEachIndexed { index, list ->
+                list.map {
+                    fiveSingleArrayCalendarEntity!!.add(
+                        CalendarEntity.Event(
+                            it.id.toLong() ?: 123,
+                            processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
+                            startTime = processEventTime(index, it.startDate),
+                            endTime = processEventTime(index, it.endDate), "",
+                            Color.parseColor("#bbbbbd"), false, isCanceled = false
+                        )
+                    )
+                }
+            }
+            Log.e("prev date events", "  $fiveSingleArrayCalendarEntity")
+
+            adapter.submitList(fiveSingleArrayCalendarEntity!!)
+        }
     }
 
+    // Load Next 5 Engineers
+    private fun loadNextFiveEngineers() {
+        val arrayListForToday = EventUtils.decreaseEngineerIndex()
+
+        fiveSingleArrayCalendarEntity?.clear()
+
+        // Convert engineers to calendar entity also change heading names
+        arrayListForToday!!.forEachIndexed { index, list ->
+            list.map {
+                fiveSingleArrayCalendarEntity!!.add(
+                    CalendarEntity.Event(
+                        it.id.toLong() ?: 123,
+                        processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
+                        startTime = processEventTime(index, it.startDate),
+                        endTime = processEventTime(index, it.endDate), "",
+                        Color.parseColor("#bbbbbd"), false, isCanceled = false
+                    )
+                )
+            }
+        }
+
+        fiveSingleArrayCalendarEntity?.let {
+            adapter.submitList(it)
+        }
+
+    }
+
+    // Load Previous 5 Engineers
+    private fun loadPrevFiveEngineers() {
+        val arrayListForToday = EventUtils.increaseEngineerIndex()
+
+        fiveSingleArrayCalendarEntity?.clear()
+
+        // Convert engineers to calendar entity also change heading names
+        arrayListForToday!!.forEachIndexed { index, list ->
+            list.map {
+                fiveSingleArrayCalendarEntity!!.add(
+                    CalendarEntity.Event(
+                        it.id.toLong() ?: 123,
+                        processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
+                        startTime = processEventTime(index, it.startDate),
+                        endTime = processEventTime(index, it.endDate), "",
+                        Color.parseColor("#bbbbbd"), false, isCanceled = false
+                    )
+                )
+            }
+        }
+
+        fiveSingleArrayCalendarEntity?.let {
+            adapter.submitList(it)
+        }
+    }
 
     private fun onLoadMore(yearMonths: List<YearMonth>) {
         viewModel.fetchEvents(yearMonths)
