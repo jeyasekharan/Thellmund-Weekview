@@ -88,7 +88,10 @@ private class HeaderUpdater(
         /** Setting engineer names for heading */
         missingDates.forEachIndexed { index, calendar ->
             val key = calendar.toEpochDays()
-            labelLayouts.put(key, calculateStaticLayoutForDate(calendar, name = viewState.engineerNames[index]!!))
+
+            viewState.engineerNames[index]?.let {
+                labelLayouts.put(key, calculateStaticLayoutForDate(calendar, name = it))
+            }
         }
 
 
