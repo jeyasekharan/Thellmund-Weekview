@@ -53,6 +53,7 @@ class BasicActivity : AppCompatActivity() {
             weekdayLabel + "\n" + dateLabel
         }
 
+
         viewModel.viewState.observe(this) { viewState ->
             adapter.submitList(viewState.entities)
         }

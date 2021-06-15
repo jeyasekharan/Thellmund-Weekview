@@ -1,6 +1,7 @@
 package com.alamkanak.weekview
 
 import android.content.Context
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
@@ -150,6 +151,7 @@ internal class WeekViewGestureHandler(
     }
 
     private fun goToNearestOrigin() {
+        Log.e("goToNearestOrigin ","${viewState.dayWidth}   ${viewState.currentOrigin.x} ")
         val dayWidth = viewState.dayWidth
         val daysFromOrigin = viewState.currentOrigin.x / dayWidth.toDouble()
         val adjustedDaysFromOrigin = daysFromOrigin.roundToInt()

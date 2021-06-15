@@ -89,13 +89,18 @@ private class HeaderUpdater(
         missingDates.forEachIndexed { index, calendar ->
             val key = calendar.toEpochDays()
 
-            viewState.engineerNames[index]?.let {
-                labelLayouts.put(key, calculateStaticLayoutForDate(calendar, name = it))
+            if (viewState.engineerNames.isNotEmpty()) {
+                if (viewState.engineerNames[index] != null) {
+                    labelLayouts.put(key, calculateStaticLayoutForDate(calendar, name = viewState.engineerNames[index]!!))
+                } else {
+                    labelLayouts.put(key, calculateStaticLayoutForDate(calendar,  name = "default"))
+                }
+            } else {
+                labelLayouts.put(key, calculateStaticLayoutForDate(calendar, name = "default"))
             }
         }
 
-
-        /** Original Code*/
+        /** Original Code */
     /*      for (date in missingDates) {
               val key = date.toEpochDays()
               labelLayouts.put(key, calculateStaticLayoutForDateOriginal(date))
@@ -105,8 +110,8 @@ private class HeaderUpdater(
               labelLayouts.put(index, calculateStaticLayoutForDate2(name = element))
           } */
 
-        val dateLabels = viewState.dateRange.map { labelLayouts[it.toEpochDays()] }
-        updateHeaderHeight(dateLabels)
+            val dateLabels = viewState.dateRange.map { labelLayouts[it.toEpochDays()] }
+            updateHeaderHeight(dateLabels)
     }
 
     private fun updateHeaderHeight(

@@ -49,11 +49,13 @@
     </LinearLayout>
 
     <com.alamkanak.weekview.WeekView
-        android:id="@+id/weekView"
+        android:id="@+id/weekView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:columnGap="1dp"
-        app:eventCornerRadius="4dp"
+        app:adaptiveEventTextSize="true"
+        app:allDayEventTextSize="13sp"
+        app:eventCornerRadius="8dp"
         app:eventTextColor="@color/white"
         app:headerBottomLineColor="@color/gray_300"
         app:headerBottomLineWidth="1dp"
@@ -78,6 +80,6 @@
         app:timeColumnSeparatorStrokeWidth="1dp"
         app:timeColumnTextColor="@color/gray_600"
         app:timeColumnTextSize="12sp"
-        app:todayHeaderTextColor="@color/accent" />
+        app:todayHeaderTextColor="@color/accent"/>
 
 </LinearLayout>

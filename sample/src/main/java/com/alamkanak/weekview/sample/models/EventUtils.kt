@@ -14,7 +14,7 @@ object EventUtils {
     lateinit var arrFiveGroupsArrayKeys: List<List<String>>
 
 
-    lateinit var keysEngineer: List<String>
+    var keysEngineer: List<String>? = null
 
     // Static index for grouping list of engineers
     var usersListIndex = 0
@@ -111,7 +111,7 @@ object EventUtils {
 
         var usersNames = arrayOfNulls<String>(10) // returns Array<String?>
 
-        keysEngineer.forEachIndexed { index, key ->
+        keysEngineer?.forEachIndexed { index, key ->
             val user = UserDetails.arEngineersObjectList?.first { it.user_id.toString() == key }
             usersNames[index] = user?.username!!
         }
@@ -134,7 +134,7 @@ object EventUtils {
 
         val usersNames :ArrayList<String> = arrayListOf<String>()	 // returns Array<String?>
 
-        keysEngineer.forEachIndexed { index, key ->
+        keysEngineer?.forEachIndexed { index, key ->
             val user = UserDetails.arEngineersObjectList?.first { it.user_id.toString() == key }
             user?.username?.let {
                 usersNames.add(user?.username!!)
@@ -153,7 +153,7 @@ object EventUtils {
 
 
     // Get events from engineers Index
-    fun setGridAdapter(arList: Map<String, List<Events>>): ArrayList<List<Events>> {
+    fun setGridAdapter(arList: Map<String, List<Events>>): ArrayList<List<Events>>? {
 
         var arList2: Map.Entry<String, List<Events>>
         var nameIndex = 0
@@ -196,7 +196,7 @@ object EventUtils {
             keysEngineer = DiaryData.getKeyIndex(arrFiveGroupsArrayKeys, usersListIndex)
         }
 
-        val eventsData = getFiveEvents(arList, keysEngineer)
+        val eventsData = keysEngineer?.let { getFiveEvents(arList, it) }
 
         return eventsData
     }
@@ -236,7 +236,7 @@ object EventUtils {
             println("eventGroupedOnEngineerIDs inccc   $eventGroupedOnEngineerIDs  ${eventGroupedOnEngineerIDs?.size}")
 
             eventGroupedOnEngineerIDs?.let {
-                eventsData = getFiveEvents(it, keysEngineer)
+                eventsData = keysEngineer?.let { it1 -> getFiveEvents(it, it1) }
                 println("increases   $eventsData")
 
             }
@@ -260,7 +260,7 @@ object EventUtils {
             println("eventGroupedOnEngineerIDs decccc   $eventGroupedOnEngineerIDs   ${eventGroupedOnEngineerIDs?.size}")
 
             eventGroupedOnEngineerIDs?.let {
-                eventsData = getFiveEvents(it, keysEngineer)
+                eventsData = keysEngineer?.let { it1 -> getFiveEvents(it, it1) }
             }
         }
         return eventsData

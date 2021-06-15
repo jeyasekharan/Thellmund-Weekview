@@ -36,8 +36,12 @@ class DiaryData {
             return arrayKeys
         }
 
-        fun getKeyIndex(listKeys : List<List<String>>, index: Int) : List<String> {
-            return listKeys[index]
+        fun getKeyIndex(listKeys : List<List<String>>, index: Int) : List<String>? {
+            return if (listKeys.isNotEmpty()) {
+                listKeys[index]
+            } else {
+                null
+            }
         }
 
     }

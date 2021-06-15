@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.text.style.ImageSpan
 import android.text.style.StyleSpan
 import android.util.Log
@@ -47,6 +48,8 @@ class StaticActivity : AppCompatActivity() {
 
     private val arrFromToday =
         arrayOf("2021-06-10", "2021-06-10", "2021-06-10", "2021-06-12", "2021-06-13")
+
+    val eventBackground = "#bbbbbd"
 
     private val adapter: StaticActivityWeekViewAdapter by lazy {
         StaticActivityWeekViewAdapter(
@@ -103,20 +106,27 @@ class StaticActivity : AppCompatActivity() {
         val bob = SpannableStringBuilder()
         var len = 0
         bob.append(title)
+        bob.setSpan(ForegroundColorSpan(Color.parseColor("#303030")), len, bob.length,Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         bob.setSpan(StyleSpan(Typeface.BOLD), 0, bob.length, 0)
         len = bob.length
 
         bob.append("\n")
         bob.append("\n${engineerName}")
+        bob.setSpan(ForegroundColorSpan(Color.parseColor("#303030")), len, bob.length,Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         bob.append("\n")
         bob.append("\n")
-        len = bob.length
 
         location?.let {
             // Event Engineer id
+            len = bob.length
             bob.append(it)
             bob.append("\n")
+            bob.setSpan(ForegroundColorSpan(Color.parseColor("#de0d0d")), len, bob.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            println("the length  ${bob.subSequence(len, bob.length)}")
+
         }
+        bob.append("\n")
+
         // Set according to job event type
         when (jobEventType) {
             1 -> {
@@ -222,7 +232,8 @@ class StaticActivity : AppCompatActivity() {
         // Get data and flatten
         //arrayList = EventUtils.getData()
         val arrayListForToday = EventUtils.getDataForSingleDate("2021-05-29")
-        currDate = "2021-05-29"
+       // currDate = getTodayDate()
+        currDate ="2021-05-29"
 
 
         binding.dateRangeTextView.text = currDate
@@ -237,6 +248,7 @@ class StaticActivity : AppCompatActivity() {
         //Convert Engineer JSON to Engineer Models
         UserDetails.getModelFromJson()
 
+
         // Convert engineers to calendar entity also change heading names
         arrayListForToday?.forEachIndexed { index, list ->
             list.map {
@@ -246,15 +258,12 @@ class StaticActivity : AppCompatActivity() {
                         processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
                         startTime = processEventTime(index, it.startDate),
                         endTime = processEventTime(index, it.endDate), "",
-                        Color.parseColor("#bbbbbd"), false, isCanceled = false
+                        Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
                     )
                 )
             }
         }
 
-        fiveSingleArrayCalendarEntity!!.forEachIndexed { index, event ->
-            Log.e("   reformed  ", "  ${event}")
-        }
 
 
         // Convert Single Event to Calendar Event
@@ -282,13 +291,13 @@ class StaticActivity : AppCompatActivity() {
 
 
         binding.leftNavigationButton.setOnClickListener {
-            //goToPrevDateEvent()
-            loadPrevFiveEngineers()
+            goToPrevDateEvent()
+            //loadPrevFiveEngineers()
         }
 
         binding.rightNavigationButton.setOnClickListener {
-            //goToNextDateEvent()
-            loadNextFiveEngineers()
+            goToNextDateEvent()
+         //loadNextFiveEngineers()
         }
 
         /** Default codes hidden  */
@@ -334,6 +343,19 @@ class StaticActivity : AppCompatActivity() {
             // Clear previous events and add the next items
             fiveSingleArrayCalendarEntity?.clear()
 
+            engineerNames = EventUtils.getEngineerColumnNames(currDate!!)
+            arrayListForToday?.let{
+                binding.weekView.setEngineerNames(engineerNames.toTypedArray())
+                binding.weekView.numberOfVisibleDays = it.size
+
+                // For zero we get one error to solve that this code
+                if(arrayListForToday.size == 0) {
+                    binding.weekView.setEngineerNames(engineerNames.toTypedArray())
+                    binding.weekView.numberOfVisibleDays = 1
+                }
+            }
+
+
             // Convert engineers to calendar entity also change heading names
             arrayListForToday?.forEachIndexed { index, list ->
                 list.map { it ->
@@ -343,7 +365,7 @@ class StaticActivity : AppCompatActivity() {
                             processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
                             startTime = processEventTime(index, it.startDate),
                             endTime = processEventTime(index, it.endDate), "",
-                            Color.parseColor("#bbbbbd"), false, isCanceled = false
+                            Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
                         )
                     )
                 }
@@ -379,6 +401,21 @@ class StaticActivity : AppCompatActivity() {
             // Clear previous events and add the next items
             fiveSingleArrayCalendarEntity?.clear()
 
+
+
+            engineerNames = EventUtils.getEngineerColumnNames(currDate!!)
+            arrayListForToday?.let{
+                binding.weekView.setEngineerNames(engineerNames.toTypedArray())
+                binding.weekView.numberOfVisibleDays = it.size
+
+
+                // For zero we get one error to solve that this code
+                if(arrayListForToday.size == 0) {
+                    binding.weekView.setEngineerNames(engineerNames.toTypedArray())
+                    binding.weekView.numberOfVisibleDays = 1
+                }
+            }
+
             // Convert engineers to calendar entity also change heading names
             arrayListForToday?.forEachIndexed { index, list ->
                 list.map {
@@ -388,7 +425,7 @@ class StaticActivity : AppCompatActivity() {
                             processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
                             startTime = processEventTime(index, it.startDate),
                             endTime = processEventTime(index, it.endDate), "",
-                            Color.parseColor("#bbbbbd"), false, isCanceled = false
+                            Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
                         )
                     )
                 }
@@ -415,12 +452,13 @@ class StaticActivity : AppCompatActivity() {
             engineerNames = EventUtils.getEngineerColumnNames(currDate!!)
             engineerNames.let {
                 binding.weekView.setEngineerNames(it.toTypedArray())
+                binding.weekView.numberOfVisibleDays = engineerNames.size
             }
             print( " gotten names $engineerNames")
 
 
             // Convert engineers to calendar entity also change heading names
-            arrayListForToday?.forEachIndexed { index, list ->
+            arrayListForToday.forEachIndexed { index, list ->
                 list.map {
                     fiveSingleArrayCalendarEntity!!.add(
                         CalendarEntity.Event(
@@ -428,7 +466,7 @@ class StaticActivity : AppCompatActivity() {
                             processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
                             startTime = processEventTime(index, it.startDate),
                             endTime = processEventTime(index, it.endDate), "",
-                            Color.parseColor("#bbbbbd"), false, isCanceled = false
+                            Color.parseColor(eventBackground), false, isCanceled = false
                         )
                     )
                 }
