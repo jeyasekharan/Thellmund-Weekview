@@ -93,6 +93,17 @@ class StaticActivity : AppCompatActivity() {
         }
     }
 
+    fun processAllDayTitle(title: String): SpannableStringBuilder {
+        val bob = SpannableStringBuilder()
+        var len = 0
+        bob.append(title)
+        bob.setSpan(ForegroundColorSpan(Color.parseColor("#303030")), len, bob.length,Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        bob.setSpan(StyleSpan(Typeface.BOLD), 0, bob.length, 0)
+        len = bob.length
+
+        return bob
+    }
+
     fun processTitle(
         title: String,
         engineerID: String,
@@ -252,15 +263,27 @@ class StaticActivity : AppCompatActivity() {
         // Convert engineers to calendar entity also change heading names
         arrayListForToday?.forEachIndexed { index, list ->
             list.map {
-                fiveSingleArrayCalendarEntity!!.add(
-                    CalendarEntity.Event(
-                        it.id.toLong() ?: 123,
-                        processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
-                        startTime = processEventTime(index, it.startDate),
-                        endTime = processEventTime(index, it.endDate), "",
-                        Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
+                if(it.hasInterval) {
+                    fiveSingleArrayCalendarEntity!!.add(
+                        CalendarEntity.Event(
+                            it.id.toLong() ?: 123,
+                            processAllDayTitle(it.title),
+                            startTime = processEventTime(index, it.startDate),
+                            endTime = processEventTime(index, it.endDate), "",
+                            Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
+                        )
                     )
-                )
+                } else {
+                    fiveSingleArrayCalendarEntity!!.add(
+                        CalendarEntity.Event(
+                            it.id.toLong() ?: 123,
+                            processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
+                            startTime = processEventTime(index, it.startDate),
+                            endTime = processEventTime(index, it.endDate), "",
+                            Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
+                        )
+                    )
+                }
             }
         }
 
@@ -365,15 +388,28 @@ class StaticActivity : AppCompatActivity() {
             // Convert engineers to calendar entity also change heading names
             arrayListForToday?.forEachIndexed { index, list ->
                 list.map { it ->
-                    fiveSingleArrayCalendarEntity!!.add(
-                        CalendarEntity.Event(
-                            it.id.toLong() ?: 123,
-                            processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
-                            startTime = processEventTime(index, it.startDate),
-                            endTime = processEventTime(index, it.endDate), "",
-                            Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
+                    // Check for all day event
+                    if(it.hasInterval) {
+                        fiveSingleArrayCalendarEntity!!.add(
+                            CalendarEntity.Event(
+                                it.id.toLong() ?: 123,
+                                processAllDayTitle(it.title),
+                                startTime = processEventTime(index, it.startDate),
+                                endTime = processEventTime(index, it.endDate), "",
+                                Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
+                            )
                         )
-                    )
+                    } else {
+                        fiveSingleArrayCalendarEntity!!.add(
+                            CalendarEntity.Event(
+                                it.id.toLong() ?: 123,
+                                processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
+                                startTime = processEventTime(index, it.startDate),
+                                endTime = processEventTime(index, it.endDate), "",
+                                Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
+                            )
+                        )
+                    }
                 }
             }
             Log.e("next date events", "  $fiveSingleArrayCalendarEntity")
@@ -425,15 +461,28 @@ class StaticActivity : AppCompatActivity() {
             // Convert engineers to calendar entity also change heading names
             arrayListForToday?.forEachIndexed { index, list ->
                 list.map {
-                    fiveSingleArrayCalendarEntity!!.add(
-                        CalendarEntity.Event(
-                            it.id.toLong() ?: 123,
-                            processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
-                            startTime = processEventTime(index, it.startDate),
-                            endTime = processEventTime(index, it.endDate), "",
-                            Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
+                    // Check for all day event
+                    if(it.hasInterval) {
+                        fiveSingleArrayCalendarEntity!!.add(
+                            CalendarEntity.Event(
+                                it.id.toLong() ?: 123,
+                                processAllDayTitle(it.title),
+                                startTime = processEventTime(index, it.startDate),
+                                endTime = processEventTime(index, it.endDate), "",
+                                Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
+                            )
                         )
-                    )
+                    } else {
+                        fiveSingleArrayCalendarEntity!!.add(
+                            CalendarEntity.Event(
+                                it.id.toLong() ?: 123,
+                                processTitle(it.title, it.engineer_id, it.location, it.jobEventType),
+                                startTime = processEventTime(index, it.startDate),
+                                endTime = processEventTime(index, it.endDate), "",
+                                Color.parseColor(eventBackground), it.hasInterval, isCanceled = false
+                            )
+                        )
+                    }
                 }
             }
             Log.e("prev date events", "  $fiveSingleArrayCalendarEntity")

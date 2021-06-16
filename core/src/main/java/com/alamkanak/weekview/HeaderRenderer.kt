@@ -86,7 +86,7 @@ private class HeaderUpdater(
 
 
         /** Setting engineer names for heading */
-  /*      missingDates.forEachIndexed { index, calendar ->
+        missingDates.forEachIndexed { index, calendar ->
             val key = calendar.toEpochDays()
 
             if (viewState.engineerNames.isNotEmpty()) {
@@ -98,13 +98,13 @@ private class HeaderUpdater(
             } else {
                 labelLayouts.put(key, calculateStaticLayoutForDate(calendar, name = "default"))
             }
-        }*/
+        }
 
         /** Original Code */
-          for (date in missingDates) {
+     /*     for (date in missingDates) {
               val key = date.toEpochDays()
               labelLayouts.put(key, calculateStaticLayoutForDateOriginal(date))
-          }
+          }*/
 
 
        /*   viewState.engineerNames.forEachIndexed{ index, element ->
