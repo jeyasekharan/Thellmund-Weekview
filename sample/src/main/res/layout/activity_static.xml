@@ -49,13 +49,15 @@
     </LinearLayout>
 
     <com.alamkanak.weekview.WeekView
-        android:id="@+id/weekView1"
+        android:id="@+id/weekView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:columnGap="1dp"
         app:adaptiveEventTextSize="true"
         app:allDayEventTextSize="13sp"
         app:eventCornerRadius="8dp"
+        app:eventPaddingHorizontal="4dp"
+        app:eventPaddingVertical="5dp"
         app:eventTextColor="@color/white"
         app:headerBottomLineColor="@color/gray_300"
         app:headerBottomLineWidth="1dp"
@@ -82,4 +84,36 @@
         app:timeColumnTextSize="12sp"
         app:todayHeaderTextColor="@color/accent"/>
 
+  <!--  <com.alamkanak.weekview.WeekView
+        android:id="@+id/weekView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:columnGap="1dp"
+        app:eventCornerRadius="4dp"
+        app:eventTextColor="@color/white"
+        app:headerBottomLineColor="@color/gray_300"
+        app:headerBottomLineWidth="1dp"
+        app:headerPadding="12dp"
+        app:headerTextColor="@color/gray_600"
+        app:horizontalScrollingEnabled="false"
+        app:hourHeight="60dp"
+        app:nowLineColor="@color/accent"
+        app:nowLineDotColor="@color/accent"
+        app:nowLineDotRadius="5dp"
+        app:nowLineStrokeWidth="1dp"
+        app:numberOfVisibleDays="7"
+        app:overlappingEventGap="1dp"
+        app:showFirstDayOfWeekFirst="true"
+        app:showHeaderBottomLine="true"
+        app:showNowLine="true"
+        app:showNowLineDot="true"
+        app:showTimeColumnSeparator="true"
+        app:timeColumnBackgroundColor="@color/white"
+        app:timeColumnPadding="8dp"
+        app:timeColumnSeparatorColor="@color/gray_300"
+        app:timeColumnSeparatorStrokeWidth="1dp"
+        app:timeColumnTextColor="@color/gray_600"
+        app:timeColumnTextSize="12sp"
+        app:todayHeaderTextColor="@color/accent" />
+-->
 </LinearLayout>

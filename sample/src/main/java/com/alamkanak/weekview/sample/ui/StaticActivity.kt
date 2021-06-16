@@ -290,6 +290,12 @@ class StaticActivity : AppCompatActivity() {
         }
 
 
+        // Set Data
+        fiveSingleArrayCalendarEntity?.let {
+            adapter.submitList(it)
+        }
+
+
         binding.leftNavigationButton.setOnClickListener {
             goToPrevDateEvent()
             //loadPrevFiveEngineers()
@@ -297,11 +303,11 @@ class StaticActivity : AppCompatActivity() {
 
         binding.rightNavigationButton.setOnClickListener {
             goToNextDateEvent()
-         //loadNextFiveEngineers()
+            //loadNextFiveEngineers()
         }
 
         /** Default codes hidden  */
-        /*     binding.leftNavigationButton.setOnClickListener {
+         /*    binding.leftNavigationButton.setOnClickListener {
                  val firstDate = binding.weekView.firstVisibleDateAsLocalDate
                  val newFirstDate = firstDate.minusDays(7)
                  binding.weekView.scrollToDate(newFirstDate)
@@ -317,7 +323,7 @@ class StaticActivity : AppCompatActivity() {
             fiveSingleArrayCalendarEntity?.let {
                 adapter.submitList(it)
             }
-            //  adapter.submitList(viewState.entities)
+           // adapter.submitList(viewState.entities)
         }
     }
 
@@ -434,6 +440,7 @@ class StaticActivity : AppCompatActivity() {
 
             adapter.submitList(fiveSingleArrayCalendarEntity!!)
         }
+
     }
 
     // Load Next 5 Engineers
@@ -537,6 +544,7 @@ class StaticActivity : AppCompatActivity() {
         viewModel.fetchEvents(yearMonths)
     }
 
+
     private fun onRangeChanged(startDate: LocalDate, endDate: LocalDate) {
         binding.dateRangeTextView.text = buildDateRangeText(startDate, endDate)
     }
@@ -576,10 +584,10 @@ private class StaticActivityWeekViewAdapter(
     }
 
     override fun onLoadMore(startDate: LocalDate, endDate: LocalDate) {
-        loadMoreHandler(yearMonthsBetween(startDate, endDate))
+       // loadMoreHandler(yearMonthsBetween(startDate, endDate))
     }
 
     override fun onRangeChanged(firstVisibleDate: LocalDate, lastVisibleDate: LocalDate) {
-        rangeChangeHandler(firstVisibleDate, lastVisibleDate)
+       // rangeChangeHandler(firstVisibleDate, lastVisibleDate)
     }
 }
