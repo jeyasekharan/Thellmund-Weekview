@@ -101,11 +101,12 @@ private class HeaderUpdater(
         }
 
         /** Original Code */
-     /*     for (date in missingDates) {
+         /* for (date in missingDates) {
               val key = date.toEpochDays()
               labelLayouts.put(key, calculateStaticLayoutForDateOriginal(date))
           }*/
 
+        /** ****** */
 
        /*   viewState.engineerNames.forEachIndexed{ index, element ->
               labelLayouts.put(index, calculateStaticLayoutForDate2(name = element))

@@ -11,6 +11,7 @@ import android.text.style.ImageSpan
 import android.text.style.StyleSpan
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.alamkanak.weekview.WeekView
 import com.alamkanak.weekview.WeekViewEntity
 import com.alamkanak.weekview.jsr310.WeekViewPagingAdapterJsr310
 import com.alamkanak.weekview.sample.R
@@ -58,6 +59,7 @@ class StaticActivity : AppCompatActivity() {
         )
     }
 
+
     private fun processEventTime(index: Int, datetime: String): LocalDateTime {
         //time = 2021-05-29 08:00:00.0//
 
@@ -94,6 +96,7 @@ class StaticActivity : AppCompatActivity() {
     }
 
     fun processAllDayTitle(title: String): SpannableStringBuilder {
+
         val bob = SpannableStringBuilder()
         var len = 0
         bob.append(title)
@@ -134,7 +137,6 @@ class StaticActivity : AppCompatActivity() {
             bob.append("\n")
             bob.setSpan(ForegroundColorSpan(Color.parseColor("#de0d0d")), len, bob.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             println("the length  ${bob.subSequence(len, bob.length)}")
-
         }
         bob.append("\n")
 
@@ -260,6 +262,7 @@ class StaticActivity : AppCompatActivity() {
         UserDetails.getModelFromJson()
 
 
+
         // Convert engineers to calendar entity also change heading names
         arrayListForToday?.forEachIndexed { index, list ->
             list.map {
@@ -289,6 +292,9 @@ class StaticActivity : AppCompatActivity() {
 
 
 
+
+
+
         // Convert Single Event to Calendar Event
         /*  fiveSingleArrayCalendarEntity = fiveSingleArray!!.mapIndexed { index, it ->
               CalendarEntity.Event(
@@ -304,6 +310,7 @@ class StaticActivity : AppCompatActivity() {
         // it.location, 12345, false, false) }
 
         binding.toolbarContainer.toolbar.setupWithWeekView(binding.weekView)
+        //binding.weekView.adapter = adapter
         binding.weekView.adapter = adapter
 
         binding.weekView.setEngineerNames(arrayOf("name1 ", "name 2", "name 3", "name 4", "name 5"))
@@ -364,7 +371,6 @@ class StaticActivity : AppCompatActivity() {
 
             // Set heading text
             setDateText(currDate!!)
-            Log.e("next date button press", "  $currDate")
 
             // Get the events for the particular date
             val arrayListForToday = EventUtils.getDataForSingleDate(currDate!!)
@@ -593,7 +599,6 @@ class StaticActivity : AppCompatActivity() {
         viewModel.fetchEvents(yearMonths)
     }
 
-
     private fun onRangeChanged(startDate: LocalDate, endDate: LocalDate) {
         binding.dateRangeTextView.text = buildDateRangeText(startDate, endDate)
     }
@@ -611,6 +616,7 @@ private class StaticActivityWeekViewAdapter(
 ) : WeekViewPagingAdapterJsr310<CalendarEntity>() {
 
     override fun onCreateEntity(item: CalendarEntity): WeekViewEntity = item.toWeekViewEntity()
+
 
     override fun onEventClick(data: CalendarEntity) {
         if (data is CalendarEntity.Event) {
@@ -639,4 +645,36 @@ private class StaticActivityWeekViewAdapter(
     override fun onRangeChanged(firstVisibleDate: LocalDate, lastVisibleDate: LocalDate) {
        // rangeChangeHandler(firstVisibleDate, lastVisibleDate)
     }
+}
+
+
+class MyCustomSimpleAdapter : WeekView.SimpleAdapter<Events>() {
+
+    override fun onCreateEntity(item: Events): WeekViewEntity {
+        return WeekViewEntity.Event.Builder(item)
+            .setId(item.id.toLong())
+            .setTitle(item.title)
+            .setStartTime(processCalendarTime(0, "2021-05-29 09:00:00"))
+            .setEndTime(processCalendarTime(0, "2021-05-29 10:00:00"))
+            .setAllDay(false)
+            .build()
+    }
+}
+
+private fun processCalendarTime(index: Int, datetime: String): Calendar {
+    //time = 2021-05-29 08:00:00.0//
+    val arrFromToday =
+        arrayOf("2021-05-29", "2021-06-18", "2021-06-18", "2021-06-18", "2021-06-20")
+
+    val strArr = datetime.split(" ")
+    // val time = strArr[1].substring(0, 5)
+
+    val localString = arrFromToday[index] + " " + strArr[1]
+
+    val cal = Calendar.getInstance()
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+    cal.time = sdf.parse(localString)
+
+    Log.e("lovaeee", " localee $cal")
+    return cal
 }
